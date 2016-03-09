@@ -1,9 +1,11 @@
 package me.hollasch.slopefieldgenerator;
 
+import me.hollasch.slopefieldgenerator.menu.SlopeFieldMenu;
+
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.math.BigDecimal;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,19 +33,30 @@ public class SlopeFieldMain {
 
       public static Timer applicationTimer = new Timer();
 
+      public static double heatmapSensitivity = 1;
+      public static Color backgroundColor = Color.black;
+      public static Color tickColor = Color.white;
+
+      public static SlopeField slopeField;
+      public static JPanel drawingPanel;
+
       public static void main(String[] args) {
             JFrame frame = new JFrame("Slope Field Generator - Connor Hollasch");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1000, 1000);
             frame.setFont(new Font("TabbedPane", Font.PLAIN, 20));
 
+            try {
+                  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {}
+
             final JTextField inputExpressionTestField = new JTextField("x + y");
             inputExpressionTestField.setFont(frame.getFont());
             final JTextField intervalsTextField = new JTextField("25");
             intervalsTextField.setFont(frame.getFont());
 
-            final SlopeField slopeField = new SlopeField(inputExpressionTestField.getText());
-            final JPanel panel = new JPanel() {
+            slopeField = new SlopeField(inputExpressionTestField.getText());
+            drawingPanel = new JPanel() {
                   @Override
                   public void paint(Graphics g) {
                         slopeField.paint(g, getWidth(), getHeight());
@@ -56,7 +69,7 @@ public class SlopeFieldMain {
                               @Override
                               public void run() {
                                     if (slopeField.setExpression(inputExpressionTestField.getText())) {
-                                          panel.repaint();
+                                          drawingPanel.repaint();
                                     }
                               }
                         }, 50);
@@ -67,7 +80,7 @@ public class SlopeFieldMain {
             });
 
             frame.setLayout(new BorderLayout());
-            frame.add(panel, BorderLayout.CENTER);
+            frame.add(drawingPanel, BorderLayout.CENTER);
 
             JPanel textPanel = new JPanel();
 
@@ -86,18 +99,6 @@ public class SlopeFieldMain {
             textPanel.add(l2);
             textPanel.add(intervalsTextField);
 
-            final JCheckBox heatmap = new JCheckBox("Enable heatmap");
-            heatmap.setSelected(true);
-            heatmap.setFont(frame.getFont());
-
-            heatmap.addActionListener(new ActionListener() {
-                  @Override
-                  public void actionPerformed(ActionEvent e) {
-                        SlopeFieldMain.isUsingHeatmap = heatmap.isSelected();
-                        panel.repaint();
-                  }
-            });
-
             JButton updateButton = new JButton("Update");
             updateButton.setFont(frame.getFont());
             updateButton.addActionListener(new ActionListener() {
@@ -113,16 +114,16 @@ public class SlopeFieldMain {
                               SlopeFieldMain.slopeIntervals = 10;
                         }
 
-                        panel.repaint();
+                        drawingPanel.repaint();
                   }
             });
 
             textPanel.add(updateButton);
-            textPanel.add(heatmap);
 
+            frame.setJMenuBar(new SlopeFieldMenu());
             frame.add(textPanel, BorderLayout.PAGE_START);
             frame.setVisible(true);
 
-            panel.repaint();
+            drawingPanel.repaint();
       }
 }

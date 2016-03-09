@@ -41,24 +41,20 @@ public class SlopeField {
                   if (old != null) {
                         expression = old;
                   }
-            }
+            } catch (Exception e) { return true; }
 
             return false;
       }
 
       public void paint(Graphics g, int canvasWidth, int canvasHeight) {
-            g.setColor(Color.black);
+            g.setColor(SlopeFieldMain.backgroundColor);
             g.fillRect(0, 0, canvasWidth, canvasHeight);
-            g.setColor(Color.white);
+            g.setColor(SlopeFieldMain.tickColor);
 
             int i = SlopeFieldMain.slopeIntervals;
 
             for (int x = 0, screenX = 0; screenX <= canvasWidth; ++x, screenX += i) {
                   for (int y = 0, screenY = 0; screenY <= canvasHeight; ++y, screenY += i) {
-                        int size = (x == i && y == i ? 4 : 2);
-
-                        g.fillOval(screenX - (size / 2), screenY - (size / 2), size, size);
-
                         if (expression != null) {
                               int lineSize = (int) (i / 2.5);
 
@@ -76,7 +72,17 @@ public class SlopeField {
                                           if (Math.abs(real) > 5) {
                                                 g.setColor(Color.red);
                                           } else {
-                                                g.setColor(Color.getHSBColor(0.5f - (float) Math.abs(real / 10), 1f, 1f));
+                                                // Logistic based heatmap coloring
+                                                double ratio = Math.abs(yOffset / (double) xOffset);
+                                                float color;
+
+                                                if (ratio >= 1) {
+                                                      color = (float) ((3 / 8f * SlopeFieldMain.heatmapSensitivity) * (1 / ratio));
+                                                } else {
+                                                      color = (float) (0.75 - (ratio * (3 / 8f * SlopeFieldMain.heatmapSensitivity)));
+                                                }
+
+                                                g.setColor(Color.getHSBColor(color, 1f, 1f));
                                           }
                                     }
 

@@ -215,7 +215,7 @@ public class Expression {
                   }
             });
 
-            addFunction(new Function("RND", 0) {
+            addFunction(new Function("RANDOM", 0) {
                   @Override
                   public BigDecimal eval(List<BigDecimal> parameters) {
                         double d = Math.random();
