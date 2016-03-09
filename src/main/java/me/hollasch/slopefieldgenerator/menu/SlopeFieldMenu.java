@@ -112,7 +112,7 @@ public class SlopeFieldMenu extends JMenuBar {
                   }
             });
 
-            final JSlider heatmapSensitivity = new JSlider(JSlider.HORIZONTAL, 0, 100, 100);
+            final JSlider heatmapSensitivity = new JSlider(JSlider.HORIZONTAL, 0, 100, 75);
             heatmapSensitivity.setPaintTicks(true);
             heatmapSensitivity.setMajorTickSpacing(10);
             heatmapSensitivity.setMinorTickSpacing(5);

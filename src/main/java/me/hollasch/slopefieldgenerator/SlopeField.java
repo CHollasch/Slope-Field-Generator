@@ -73,13 +73,15 @@ public class SlopeField {
                                                 g.setColor(Color.red);
                                           } else {
                                                 // Logistic based heatmap coloring
-                                                double ratio = Math.abs(yOffset / (double) xOffset);
+                                                double ratio = Math.abs(real);
                                                 float color;
 
+                                                double heatmapScale = SlopeFieldMain.heatmapSensitivity;
+
                                                 if (ratio >= 1) {
-                                                      color = (float) ((3 / 8f * SlopeFieldMain.heatmapSensitivity) * (1 / ratio));
+                                                      color = (float) ((heatmapScale / 2d) * (1d / ratio));
                                                 } else {
-                                                      color = (float) (0.75 - (ratio * (3 / 8f * SlopeFieldMain.heatmapSensitivity)));
+                                                      color = (float) (heatmapScale - (ratio * (heatmapScale / 2d)));
                                                 }
 
                                                 g.setColor(Color.getHSBColor(color, 1f, 1f));

@@ -33,7 +33,7 @@ public class SlopeFieldMain {
 
       public static Timer applicationTimer = new Timer();
 
-      public static double heatmapSensitivity = 1;
+      public static double heatmapSensitivity = 3/4d;
       public static Color backgroundColor = Color.black;
       public static Color tickColor = Color.white;
 
