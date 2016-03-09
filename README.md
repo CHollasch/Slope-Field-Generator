@@ -10,3 +10,19 @@ Below are some examples of function input with cooresponding slope field output.
 ![sqrt(abs(x*y))/(sin(deg(x)/6)*cos(deg(y*x)/100)*15)](https://i.gyazo.com/5e0148e7e979d446c0d80f863d18299c.png)
 ![(sin(x*y/30)*5)*((cos((y+x)/10)>=sin((y-x)/5)))](https://i.gyazo.com/243b33e9d8d1c4ce8878e36fb07b456b.png)
 ![(sin(x/5)*sin(y/5))*(((sin(x/5)>=cos(y/5))+3)*((cos((y+x)/10)>=sin((y-x)/5)))+3)](https://i.gyazo.com/9d8997d1be4eb634e39f4c72f4c87f09.png)
+
+The given equations are as follows...
+
+1. x/3
+
+2. y/x
+
+3. sin(deg(x+y)/10)*4
+
+4. sin(deg(y)/7)^2*3+cos(deg(x)/6)^2*3
+
+5. sqrt(abs(x*y))/(sin(deg(x)/6)*cos(deg(y*x)/100)*15)
+
+6. (sin(x*y/30)*5)*((cos((y+x)/10)>=sin((y-x)/5)))
+
+7. (sin(x/5)*sin(y/5))*(((sin(x/5)>=cos(y/5))+3)*((cos((y+x)/10)>=sin((y-x)/5)))+3)
