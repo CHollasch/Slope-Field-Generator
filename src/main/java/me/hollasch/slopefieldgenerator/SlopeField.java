@@ -52,16 +52,18 @@ public class SlopeField {
             g.setColor(SlopeFieldMain.tickColor);
 
             int i = SlopeFieldMain.slopeIntervals;
+            double xRange = Math.abs(SlopeFieldMain.xMax - SlopeFieldMain.xMin);
+            double yRange = Math.abs(SlopeFieldMain.yMax - SlopeFieldMain.yMin);
 
-            for (int x = 0, screenX = 0; screenX <= canvasWidth; ++x, screenX += i) {
-                  for (int y = 0, screenY = 0; screenY <= canvasHeight; ++y, screenY += i) {
+            for (double x = SlopeFieldMain.xMin, screenX = 0; screenX <= canvasWidth; x += (xRange / (canvasWidth / i)), screenX += i) {
+                  for (double y = SlopeFieldMain.yMin, screenY = 0; screenY <= canvasHeight; y += (yRange / (canvasHeight / i)), screenY += i) {
                         if (expression != null) {
                               int lineSize = (int) (i / 2.5);
 
                               try {
                                     BigDecimal val = expression
-                                            .with("x", String.valueOf(x - (canvasWidth / i / 2)))
-                                            .with("y", String.valueOf((canvasHeight / i / 2) - y)).eval();
+                                            .with("x", String.valueOf(x))
+                                            .with("y", String.valueOf(y)).eval();
 
                                     double real = val.doubleValue();
 
@@ -88,13 +90,13 @@ public class SlopeField {
                                           }
                                     }
 
-                                    g.drawLine(screenX + xOffset, screenY - yOffset, screenX - xOffset, screenY + yOffset);
+                                    g.drawLine((int) screenX + xOffset, (int) screenY - yOffset, (int) screenX - xOffset, (int) screenY + yOffset);
                               } catch (Exception e) {
                                     if (SlopeFieldMain.isUsingHeatmap) {
                                           g.setColor(Color.red);
                                     }
 
-                                    g.drawLine(screenX, screenY - lineSize, screenX, screenY + lineSize);
+                                    g.drawLine((int) screenX, (int) screenY - lineSize, (int) screenX, (int) screenY + lineSize);
                               }
                         }
                   }

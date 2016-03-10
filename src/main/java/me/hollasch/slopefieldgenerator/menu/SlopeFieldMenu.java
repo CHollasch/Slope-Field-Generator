@@ -137,7 +137,95 @@ public class SlopeFieldMenu extends JMenuBar {
             heatmap.add(new JLabel(" "));
             heatmap.add(heatmapSensitivity);
 
+            final JMenu bounds = new JMenu("Boundaries");
+
+            final JTextField xMin = new JTextField("-10");
+            xMin.addKeyListener(new KeyListener() {
+                  public void keyTyped(KeyEvent e) {
+                        SlopeFieldMain.applicationTimer.schedule(new TimerTask() {
+                              @Override
+                              public void run() {
+                                    try {
+                                          int val = Integer.parseInt(xMin.getText());
+                                          SlopeFieldMain.xMin = val;
+                                          SlopeFieldMain.drawingPanel.repaint();
+                                    } catch (NumberFormatException ex) {}
+                              }
+                        }, 50);
+                  }
+
+                  public void keyPressed(KeyEvent e) {}
+                  public void keyReleased(KeyEvent e) {}
+            });
+
+            final JTextField xMax = new JTextField("10");
+            xMax.addKeyListener(new KeyListener() {
+                  public void keyTyped(KeyEvent e) {
+                        SlopeFieldMain.applicationTimer.schedule(new TimerTask() {
+                              @Override
+                              public void run() {
+                                    try {
+                                          int val = Integer.parseInt(xMax.getText());
+                                          SlopeFieldMain.xMax = val;
+                                          SlopeFieldMain.drawingPanel.repaint();
+                                    } catch (NumberFormatException ex) {}
+                              }
+                        }, 50);
+                  }
+
+                  public void keyPressed(KeyEvent e) {}
+                  public void keyReleased(KeyEvent e) {}
+            });
+
+            final JTextField yMin = new JTextField("-10");
+            yMin.addKeyListener(new KeyListener() {
+                  public void keyTyped(KeyEvent e) {
+                        SlopeFieldMain.applicationTimer.schedule(new TimerTask() {
+                              @Override
+                              public void run() {
+                                    try {
+                                          int val = Integer.parseInt(yMin.getText());
+                                          SlopeFieldMain.yMin = val;
+                                          SlopeFieldMain.drawingPanel.repaint();
+                                    } catch (NumberFormatException ex) {}
+                              }
+                        }, 50);
+                  }
+
+                  public void keyPressed(KeyEvent e) {}
+                  public void keyReleased(KeyEvent e) {}
+            });
+
+            final JTextField yMax = new JTextField("10");
+            yMax.addKeyListener(new KeyListener() {
+                  public void keyTyped(KeyEvent e) {
+                        SlopeFieldMain.applicationTimer.schedule(new TimerTask() {
+                              @Override
+                              public void run() {
+                                    try {
+                                          int val = Integer.parseInt(yMax.getText());
+                                          SlopeFieldMain.yMax = val;
+                                          SlopeFieldMain.drawingPanel.repaint();
+                                    } catch (NumberFormatException ex) {}
+                              }
+                        }, 50);
+                  }
+
+                  public void keyPressed(KeyEvent e) {}
+                  public void keyReleased(KeyEvent e) {}
+            });
+
+            bounds.add(new JLabel("X Minimum"));
+            bounds.add(xMin);
+            bounds.add(new JLabel("X Maximum"));
+            bounds.add(xMax);
+            bounds.add(new JLabel("Y Minimum"));
+            bounds.add(yMin);
+            bounds.add(new JLabel("Y Maximum"));
+            bounds.add(yMax);
+
             add(file);
             add(heatmap);
+            add(bounds);
       }
 }
