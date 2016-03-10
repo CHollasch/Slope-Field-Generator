@@ -732,8 +732,16 @@ public class Expression {
                   if (isNumber(token)) {
                         outputQueue.add(token);
                   } else if (variables.containsKey(token)) {
+                        if (previousToken != null && isNumber(previousToken)) {
+                              stack.push("*");
+                        }
+
                         outputQueue.add(token);
                   } else if (functions.containsKey(token.toUpperCase(Locale.ROOT))) {
+                        if (previousToken != null && isNumber(previousToken)) {
+                              stack.push("*");
+                        }
+
                         stack.push(token);
                         lastFunction = token;
                   } else if (Character.isLetter(token.charAt(0))) {
