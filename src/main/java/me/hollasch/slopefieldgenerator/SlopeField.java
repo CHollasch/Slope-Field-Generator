@@ -1,105 +1,157 @@
 package me.hollasch.slopefieldgenerator;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.awt.*;
-import java.math.BigDecimal;
-import java.util.EmptyStackException;
+import java.util.ArrayList;
 
 /**
  * @author Connor Hollasch
  * @since 3/8/2016
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class SlopeField {
+public class SlopeField
+{
+    private static final ArrayList<String> javaScriptMathReplacements = new ArrayList<String>()
+    {
+        {
+            add("function abs (x) { return Math.abs(x); }");
+            add("function sin (x) { return Math.sin(x); }");
+            add("function cos (x) { return Math.cos(x); }");
+            add("function tan (x) { return Math.tan(x); }");
+            add("function asin (x) { return Math.asin(x); }");
+            add("function acos (x) { return Math.acos(x); }");
+            add("function atan (x) { return Math.atan(x); }");
+            add("function cosh (x) { return Math.cosh(x); }");
+            add("function sinh (x) { return Math.sinh(x); }");
+            add("function tanh (x) { return Math.tanh(x); }");
+            add("function pow (x) { return Math.pow(x); }");
+            add("function random () { return Math.random(); }");
+            add("function sqrt (x) { return Math.sqrt(x); }");
+            add("function floor (x) { return Math.floor(x); }");
+            add("function ceil (x) { return Math.ceil(x); }");
+        }
+    };
 
-      private Expression expression;
+    private final ScriptEngineManager factory;
+    private final ScriptEngine scriptEngine;
 
-      public SlopeField(String equation) {
-            setExpression(equation);
-      }
+    private Solvable solvable;
 
-      public boolean setExpression(String equation) {
-            Expression old = expression;
+    public SlopeField (final String equation)
+    {
+        this.factory = new ScriptEngineManager();
+        this.scriptEngine = factory.getEngineByName("JavaScript");
 
-            try {
-                  expression = new Expression(equation);
-                  expression.eval();
+        setExpression(equation);
+    }
 
-                  return true;
-            } catch (NumberFormatException | EmptyStackException | Expression.ExpressionException e) {
-                  if (old != null) {
-                        expression = old;
-                  }
-            } catch (Exception e) { return true; }
+    public boolean setExpression (final String equation)
+    {
+        final String built = transform(equation);
 
+        try {
+            this.scriptEngine.eval(built);
+
+            final Invocable inv = (Invocable) this.scriptEngine;
+
+            this.solvable = inv.getInterface(Solvable.class);
+            return true;
+        } catch (final ScriptException e) {
+            this.solvable = null;
             return false;
-      }
+        }
+    }
 
-      public void paint(Graphics g, int canvasWidth, int canvasHeight) {
-            g.setColor(SlopeFieldMain.backgroundColor);
-            g.fillRect(0, 0, canvasWidth, canvasHeight);
-            g.setColor(SlopeFieldMain.tickColor);
+    private String transform (final String expression)
+    {
+        final String preExpression = expression
+                .replace("e", String.valueOf(Math.E))
+                .replace("pi", String.valueOf(Math.PI))
+                .replace("unirandom", String.valueOf(Math.random()))
+                .replace("random", "random()");
 
-            int i = SlopeFieldMain.slopeIntervals;
-            double xRange = Math.abs(SlopeFieldMain.xMax - SlopeFieldMain.xMin);
-            double yRange = Math.abs(SlopeFieldMain.yMax - SlopeFieldMain.yMin);
+        String building = "function solve(x, y) { return " + preExpression.toLowerCase() + "; }";
+        building = building.replace("min", "Math.min");
+        building = building.replace("max", "Math.max");
 
-            for (double x = SlopeFieldMain.xMin, screenX = 0; screenX <= canvasWidth; x += (xRange / (canvasWidth / i)), screenX += i) {
-                  for (double y = SlopeFieldMain.yMin, screenY = 0; screenY <= canvasHeight; y += (yRange / (canvasHeight / i)), screenY += i) {
-                        if (expression != null) {
-                              int lineSize = (int) (i / 2.5);
+        for (final String function : SlopeField.javaScriptMathReplacements) {
+            building += function;
+        }
 
-                              try {
-                                    BigDecimal val = expression
-                                            .with("x", String.valueOf(x))
-                                            .with("y", String.valueOf(y)).eval();
+        return building;
+    }
 
-                                    double real = val.doubleValue();
+    public void paint (final Graphics g, final int canvasWidth, final int canvasHeight)
+    {
+        g.setColor(SlopeFieldMain.backgroundColor);
+        g.fillRect(0, 0, canvasWidth, canvasHeight);
+        g.setColor(SlopeFieldMain.tickColor);
 
-                                    int yOffset = real >= 0 ? (int) Math.min(real * lineSize, lineSize) : (int) (Math.min(-real * lineSize, lineSize));
-                                    int xOffset = real >= 0 ? (int) Math.min((1 / real) * lineSize, lineSize) : (int) -Math.min(Math.abs(1 / real) * lineSize, lineSize);
+        final int i = SlopeFieldMain.slopeIntervals;
+        final double xRange = Math.abs(SlopeFieldMain.xMax - SlopeFieldMain.xMin);
+        final double yRange = Math.abs(SlopeFieldMain.yMax - SlopeFieldMain.yMin);
 
-                                    if (SlopeFieldMain.isUsingHeatmap) {
-                                          if (Math.abs(real) > 5) {
-                                                g.setColor(Color.red);
-                                          } else {
-                                                // Logistic based heatmap coloring
-                                                double ratio = Math.abs(real);
-                                                float color;
+        for (double x = SlopeFieldMain.xMin, screenX = 0; screenX <= canvasWidth; x += (xRange / (canvasWidth / i)), screenX += i) {
+            for (double y = SlopeFieldMain.yMin, screenY = 0; screenY <= canvasHeight; y += (yRange / (canvasHeight / i)), screenY += i) {
+                if (this.solvable != null) {
+                    int lineSize = (int) (i / 2.5);
 
-                                                double heatmapScale = SlopeFieldMain.heatmapSensitivity;
+                    try {
+                        final Number number = this.solvable.solve(x, y);
+                        double real = number.doubleValue();
 
-                                                if (ratio >= 1) {
-                                                      color = (float) ((heatmapScale / 2d) * (1d / ratio));
-                                                } else {
-                                                      color = (float) (heatmapScale - (ratio * (heatmapScale / 2d)));
-                                                }
+                        if (SlopeFieldMain.isUsingHeatmap) {
+                            // Slope based heatmap coloring
+                            double ratio = Math.abs(real);
+                            float color;
 
-                                                g.setColor(Color.getHSBColor(color, 1f, 1f));
-                                          }
-                                    }
+                            double heatmapScale = SlopeFieldMain.heatmapSensitivity;
 
-                                    g.drawLine((int) screenX + xOffset, (int) screenY - yOffset, (int) screenX - xOffset, (int) screenY + yOffset);
-                              } catch (Exception e) {
-                                    if (SlopeFieldMain.isUsingHeatmap) {
-                                          g.setColor(Color.red);
-                                    }
+                            if (ratio >= 1) {
+                                color = (float) ((heatmapScale / 2d) * (1d / ratio));
+                            } else {
+                                color = (float) (heatmapScale - (ratio * (heatmapScale / 2d)));
+                            }
 
-                                    g.drawLine((int) screenX, (int) screenY - lineSize, (int) screenX, (int) screenY + lineSize);
-                              }
+                            g.setColor(Color.getHSBColor(color, 1f, 1f));
                         }
-                  }
+
+                        if (SlopeFieldMain.slopeIntervals == 1) {
+                            g.drawLine((int) screenX, (int) screenY, (int) screenX, (int) screenY);
+                        } else {
+                            if (SlopeFieldMain.drawCirclesInsteadOfLines) {
+                                g.fillOval((int) screenX, (int) screenY, SlopeFieldMain.slopeIntervals, SlopeFieldMain.slopeIntervals);
+                            } else {
+                                final int yOffset = real >= 0 ? (int) Math.min(real * lineSize, lineSize) : (int) (Math.min(-real * lineSize, lineSize));
+                                final int xOffset = real >= 0 ? (int) Math.min((1 / real) * lineSize, lineSize) : (int) -Math.min(Math.abs(1 / real) * lineSize, lineSize);
+
+                                g.drawLine((int) screenX + xOffset, (int) screenY - yOffset, (int) screenX - xOffset, (int) screenY + yOffset);
+                            }
+                        }
+                    } catch (Exception e) {
+                        if (SlopeFieldMain.isUsingHeatmap) {
+                            g.setColor(Color.red);
+                        }
+
+                        g.drawLine((int) screenX, (int) screenY - lineSize, (int) screenX, (int) screenY + lineSize);
+                    }
+                }
             }
-      }
+        }
+    }
 }
