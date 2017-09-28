@@ -132,7 +132,7 @@ public class SlopeField
             int yCache = 0;
             for (double y = SlopeFieldMain.yMin, screenY = 0; screenY <= canvasHeight; y += (yRange / (canvasHeight / i)), screenY += i) {
                 if (this.solvable != null) {
-                    int lineSize = (int) (i / 2.5);
+                    int lineSize = (int) (i / SlopeFieldMain.lineLengthDivisor);
 
                     try {
                         final Number number;

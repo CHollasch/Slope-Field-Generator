@@ -43,6 +43,7 @@ public class SlopeFieldMain
 
     public static boolean drawCirclesInsteadOfLines = false;
     public static boolean useAntialiasing = true;
+    public static double lineLengthDivisor = 2d;
 
     public static SlopeField slopeField;
     public static JPanel drawingPanel;

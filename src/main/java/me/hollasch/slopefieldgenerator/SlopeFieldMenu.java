@@ -92,16 +92,13 @@ public class SlopeFieldMenu extends JMenuBar
 
         final JMenu heatmap = new JMenu("Heatmap");
 
-        final JCheckBoxMenuItem heatmapEnabled = new JCheckBoxMenuItem("Enable Heatmap");
-        heatmapEnabled.setSelected(true);
+        final JCheckBoxMenuItem heatmapEnabled = new JCheckBoxMenuItem("Enable Heatmap", SlopeFieldMain.isUsingHeatmap);
 
         final JSlider heatmapSensitivity = new JSlider(JSlider.HORIZONTAL, 0, 100, 75);
         heatmapSensitivity.setPaintTicks(true);
         heatmapSensitivity.setMajorTickSpacing(10);
         heatmapSensitivity.setMinorTickSpacing(5);
-
         heatmapSensitivity.setPaintLabels(true);
-        heatmapSensitivity.setName("Test");
 
         heatmapSensitivity.addChangeListener(e -> SlopeFieldMain.applicationTimer.schedule(new TimerTask()
         {
@@ -115,6 +112,7 @@ public class SlopeFieldMenu extends JMenuBar
 
         heatmap.add(heatmapEnabled);
         heatmap.add(new JLabel(" "));
+        heatmap.add(new JLabel("Heatmap Sensitivity"));
         heatmap.add(heatmapSensitivity);
 
         final JMenu bounds = new JMenu("Boundaries");
@@ -277,8 +275,27 @@ public class SlopeFieldMenu extends JMenuBar
             SlopeFieldMain.drawingPanel.repaint();
         });
 
+        final JSlider lineLengthDivisor = new JSlider(JSlider.HORIZONTAL, 0, 50, 20);
+        lineLengthDivisor.setPaintTicks(true);
+        lineLengthDivisor.setMajorTickSpacing(10);
+        lineLengthDivisor.setMinorTickSpacing(5);
+        lineLengthDivisor.setPaintLabels(true);
+
+        lineLengthDivisor.addChangeListener(e -> SlopeFieldMain.applicationTimer.schedule(new TimerTask()
+        {
+            @Override
+            public void run ()
+            {
+                SlopeFieldMain.lineLengthDivisor = Math.max(0.5, lineLengthDivisor.getValue()) / 10d;
+                SlopeFieldMain.drawingPanel.repaint();
+            }
+        }, 50));
+
         otherSettings.add(drawCirclesInsteadOfLines);
         otherSettings.add(useAntialiasing);
+        otherSettings.add(new JLabel(" "));
+        otherSettings.add(new JLabel("Line Length Divisor"));
+        otherSettings.add(lineLengthDivisor);
 
         add(file);
         add(heatmap);
