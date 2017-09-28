@@ -47,4 +47,6 @@ public interface Solvable
     Number floor (final double x);
 
     Number ceil (final double x);
+
+    Number doif (final boolean b, final double x, final double y);
 }

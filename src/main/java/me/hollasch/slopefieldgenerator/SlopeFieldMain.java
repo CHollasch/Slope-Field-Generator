@@ -25,7 +25,6 @@ import java.util.TimerTask;
  */
 public class SlopeFieldMain
 {
-
     public static boolean isUsingHeatmap = true;
     public static int slopeIntervals = 25;
 

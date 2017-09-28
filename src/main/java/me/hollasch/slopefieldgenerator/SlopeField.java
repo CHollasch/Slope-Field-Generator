@@ -45,6 +45,7 @@ public class SlopeField
             add("function sqrt (x) { return Math.sqrt(x); }");
             add("function floor (x) { return Math.floor(x); }");
             add("function ceil (x) { return Math.ceil(x); }");
+            add("function doif (a, x, y) { if (a) { return x; } else { return y; } }");
         }
     };
 
@@ -86,6 +87,8 @@ public class SlopeField
         final String preExpression = expression
                 .replace("e", String.valueOf(Math.E))
                 .replace("pi", String.valueOf(Math.PI))
+                .replace("gi", String.valueOf(SlopeFieldMain.slopeIntervals))
+                .replace("if", "doif")
                 .replace("unirandom", String.valueOf(Math.random()))
                 .replace("random", "random()");
 
