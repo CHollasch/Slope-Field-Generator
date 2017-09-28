@@ -98,6 +98,13 @@ public class SlopeField
 
     public void paint (final Graphics g, final int canvasWidth, final int canvasHeight)
     {
+        if (SlopeFieldMain.useAntialiasing && SlopeFieldMain.slopeIntervals > 1) {
+            final RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+            ((Graphics2D) g).setRenderingHints(rh);
+        }
+
         g.setColor(SlopeFieldMain.backgroundColor);
         g.fillRect(0, 0, canvasWidth, canvasHeight);
         g.setColor(SlopeFieldMain.tickColor);
@@ -137,10 +144,10 @@ public class SlopeField
                             if (SlopeFieldMain.drawCirclesInsteadOfLines) {
                                 g.fillOval((int) screenX, (int) screenY, SlopeFieldMain.slopeIntervals, SlopeFieldMain.slopeIntervals);
                             } else {
-                                final int yOffset = real >= 0 ? (int) Math.min(real * lineSize, lineSize) : (int) (Math.min(-real * lineSize, lineSize));
-                                final int xOffset = real >= 0 ? (int) Math.min((1 / real) * lineSize, lineSize) : (int) -Math.min(Math.abs(1 / real) * lineSize, lineSize);
+                                final double yOffset = real >= 0 ? Math.min(real * lineSize, lineSize) : (Math.min(-real * lineSize, lineSize));
+                                final double xOffset = real >= 0 ? Math.min((1 / real) * lineSize, lineSize) : -Math.min(Math.abs(1 / real) * lineSize, lineSize);
 
-                                g.drawLine((int) screenX + xOffset, (int) screenY - yOffset, (int) screenX - xOffset, (int) screenY + yOffset);
+                                g.drawLine((int) (screenX + xOffset), (int) (screenY - yOffset), (int) (screenX - xOffset), (int) (screenY + yOffset));
                             }
                         }
                     } catch (Exception e) {

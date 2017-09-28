@@ -42,6 +42,7 @@ public class SlopeFieldMain
     public static Color tickColor = Color.white;
 
     public static boolean drawCirclesInsteadOfLines = false;
+    public static boolean useAntialiasing = true;
 
     public static SlopeField slopeField;
     public static JPanel drawingPanel;

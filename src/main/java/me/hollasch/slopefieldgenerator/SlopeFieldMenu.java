@@ -248,8 +248,8 @@ public class SlopeFieldMenu extends JMenuBar
 
         final JMenu otherSettings = new JMenu("Other Settings");
 
-        final JCheckBoxMenuItem drawCirclesInsteadOfLines = new JCheckBoxMenuItem("Draw Circles Instead of Lines?");
-        heatmapEnabled.setSelected(false);
+        final JCheckBoxMenuItem drawCirclesInsteadOfLines = new JCheckBoxMenuItem("Circles Instead of Lines");
+        heatmapEnabled.setSelected(SlopeFieldMain.drawCirclesInsteadOfLines);
 
         drawCirclesInsteadOfLines.addActionListener(e -> {
             SlopeFieldMain.drawCirclesInsteadOfLines = drawCirclesInsteadOfLines.isSelected();
@@ -271,7 +271,16 @@ public class SlopeFieldMenu extends JMenuBar
             SlopeFieldMain.drawingPanel.repaint();
         });
 
+        final JCheckBoxMenuItem useAntialiasing = new JCheckBoxMenuItem("Antialiasing Enabled");
+        useAntialiasing.setSelected(SlopeFieldMain.useAntialiasing);
+
+        useAntialiasing.addActionListener(e -> {
+            SlopeFieldMain.useAntialiasing = useAntialiasing.isSelected();
+            SlopeFieldMain.drawingPanel.repaint();
+        });
+
         otherSettings.add(drawCirclesInsteadOfLines);
+        otherSettings.add(useAntialiasing);
 
         add(file);
         add(heatmap);
