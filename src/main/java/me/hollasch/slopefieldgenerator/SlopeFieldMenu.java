@@ -1,14 +1,12 @@
 package me.hollasch.slopefieldgenerator;
 
-import me.hollasch.slopefieldgenerator.SlopeFieldMain;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.filechooser.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.TimerTask;

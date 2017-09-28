@@ -4,6 +4,7 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -52,6 +53,8 @@ public class SlopeField
 
     private Solvable solvable;
 
+    private double[][] cachedValues;
+
     public SlopeField (final String equation)
     {
         this.factory = new ScriptEngineManager();
@@ -62,6 +65,7 @@ public class SlopeField
 
     public boolean setExpression (final String equation)
     {
+        this.cachedValues = null;
         final String built = transform(equation);
 
         try {
@@ -110,16 +114,35 @@ public class SlopeField
         g.setColor(SlopeFieldMain.tickColor);
 
         final int i = SlopeFieldMain.slopeIntervals;
+
+        final int spanX = (int) Math.ceil((double) canvasWidth / i) + 1;
+        final int spanY = (int) Math.ceil((double) canvasHeight / i) + 1;
+
+        final boolean cachingValues =  this.cachedValues == null;
+
+        if (cachingValues) {
+            this.cachedValues = new double[spanX][spanY];
+        }
+
         final double xRange = Math.abs(SlopeFieldMain.xMax - SlopeFieldMain.xMin);
         final double yRange = Math.abs(SlopeFieldMain.yMax - SlopeFieldMain.yMin);
 
+        int xCache = 0;
         for (double x = SlopeFieldMain.xMin, screenX = 0; screenX <= canvasWidth; x += (xRange / (canvasWidth / i)), screenX += i) {
+            int yCache = 0;
             for (double y = SlopeFieldMain.yMin, screenY = 0; screenY <= canvasHeight; y += (yRange / (canvasHeight / i)), screenY += i) {
                 if (this.solvable != null) {
                     int lineSize = (int) (i / 2.5);
 
                     try {
-                        final Number number = this.solvable.solve(x, y);
+                        final Number number;
+                        if (!cachingValues) {
+                            number = this.cachedValues[xCache][yCache++];
+                        } else {
+                            number = this.solvable.solve(x, y);
+                            this.cachedValues[xCache][yCache++] = number.doubleValue();
+                        }
+
                         double real = number.doubleValue();
 
                         if (SlopeFieldMain.isUsingHeatmap) {
@@ -151,14 +174,14 @@ public class SlopeField
                             }
                         }
                     } catch (Exception e) {
-                        if (SlopeFieldMain.isUsingHeatmap) {
-                            g.setColor(Color.red);
-                        }
-
-                        g.drawLine((int) screenX, (int) screenY - lineSize, (int) screenX, (int) screenY + lineSize);
+                        JOptionPane.showMessageDialog(null, "Invalid equation entered!", "Error", JOptionPane.ERROR_MESSAGE);
+                        g.setColor(SlopeFieldMain.backgroundColor);
+                        g.fillRect(0, 0, canvasWidth, canvasHeight);
+                        return;
                     }
                 }
             }
+            ++xCache;
         }
     }
 }
