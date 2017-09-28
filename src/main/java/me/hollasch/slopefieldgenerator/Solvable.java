@@ -48,5 +48,9 @@ public interface Solvable
 
     Number ceil (final double x);
 
+    Number log (final double x);
+
+    Number ln (final double x);
+
     Number doif (final boolean b, final double x, final double y);
 }

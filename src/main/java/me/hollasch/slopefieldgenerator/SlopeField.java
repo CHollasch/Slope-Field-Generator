@@ -45,6 +45,8 @@ public class SlopeField
             add("function sqrt (x) { return Math.sqrt(x); }");
             add("function floor (x) { return Math.floor(x); }");
             add("function ceil (x) { return Math.ceil(x); }");
+            add("function log (x) { return Math.log(x); }");
+            add("function ln (x) { return log(x); }");
             add("function doif (a, x, y) { if (a) { return x; } else { return y; } }");
         }
     };
@@ -54,6 +56,7 @@ public class SlopeField
 
     private Solvable solvable;
 
+    private double lastCanvasWidth, lastCanvasHeight;
     private double[][] cachedValues;
 
     public SlopeField (final String equation)
@@ -121,11 +124,14 @@ public class SlopeField
         final int spanX = (int) Math.ceil((double) canvasWidth / i) + 1;
         final int spanY = (int) Math.ceil((double) canvasHeight / i) + 1;
 
-        final boolean cachingValues =  this.cachedValues == null;
+        boolean cachingValues =  this.cachedValues == null || this.lastCanvasHeight != canvasHeight || this.lastCanvasWidth != canvasWidth;
 
         if (cachingValues) {
             this.cachedValues = new double[spanX][spanY];
         }
+
+        this.lastCanvasWidth = canvasWidth;
+        this.lastCanvasHeight = canvasHeight;
 
         final double xRange = Math.abs(SlopeFieldMain.xMax - SlopeFieldMain.xMin);
         final double yRange = Math.abs(SlopeFieldMain.yMax - SlopeFieldMain.yMin);
