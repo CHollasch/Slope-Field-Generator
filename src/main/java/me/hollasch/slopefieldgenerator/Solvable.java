@@ -38,7 +38,7 @@ public interface Solvable
 
     Number tanh (final double x);
 
-    Number pow (final double x);
+    Number pow (final double x, final double y);
 
     Number random ();
 

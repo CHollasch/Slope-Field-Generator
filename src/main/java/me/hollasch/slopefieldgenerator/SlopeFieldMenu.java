@@ -70,6 +70,71 @@ public class SlopeFieldMenu extends JMenuBar
             }
         });
 
+        JMenuItem renderPhoto = new JMenuItem("Render Image And Save");
+        renderPhoto.addActionListener(e -> {
+            final int width, height;
+
+            final String widthIn = JOptionPane.showInputDialog("Enter the width of the image");
+
+            try {
+                width = Integer.parseInt(widthIn);
+            } catch (final NumberFormatException ex) {
+                JOptionPane.showConfirmDialog(
+                        null,
+                        "Invalid width entered, must be an integer.",
+                        "Error when getting width",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            final String heightIn = JOptionPane.showInputDialog("Enter the height of the image");
+
+            try {
+                height = Integer.parseInt(heightIn);
+            } catch (final NumberFormatException ex) {
+                JOptionPane.showConfirmDialog(
+                        null,
+                        "Invalid height entered, must be an integer.",
+                        "Error when getting height",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            JFileChooser outputFile = new JFileChooser();
+            outputFile.setFileFilter(new FileNameExtensionFilter("JPG & PNG", "jpg", "png"));
+            int val = outputFile.showSaveDialog(file.getParent());
+
+            if (val == 0) {
+                File chosen = outputFile.getSelectedFile();
+
+                if (!(chosen.getName().endsWith("jpg") || chosen.getName().endsWith("png"))) {
+                    chosen = new File(chosen.getParentFile(), chosen.getName() + ".png");
+                }
+
+                boolean png = (chosen.getName().endsWith("png"));
+
+                if (!(chosen.exists())) {
+                    try {
+                        chosen.createNewFile();
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(file.getParent(), "An error occurred when saving your file.", "Save error", JOptionPane.ERROR_MESSAGE);
+                        e1.printStackTrace();
+                    }
+                }
+
+                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                SlopeFieldMain.slopeField.paint(image.getGraphics(), width, height);
+
+                try {
+                    ImageIO.write(image, (png ? "png" : "jpg"), chosen);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         JMenuItem backgroundColor = new JMenuItem("Background Color");
         backgroundColor.addActionListener(e -> {
             Color color = JColorChooser.showDialog(null, "Select a Background Color", SlopeFieldMain.backgroundColor);
@@ -87,6 +152,7 @@ public class SlopeFieldMenu extends JMenuBar
         });
 
         file.add(photo);
+        file.add(renderPhoto);
         file.add(backgroundColor);
         file.add(tickColor);
 

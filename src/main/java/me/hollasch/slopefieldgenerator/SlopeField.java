@@ -40,7 +40,7 @@ public class SlopeField
             add("function cosh (x) { return Math.cosh(x); }");
             add("function sinh (x) { return Math.sinh(x); }");
             add("function tanh (x) { return Math.tanh(x); }");
-            add("function pow (x) { return Math.pow(x); }");
+            add("function pow (x, y) { return Math.pow(x, y); }");
             add("function random () { return Math.random(); }");
             add("function sqrt (x) { return Math.sqrt(x); }");
             add("function floor (x) { return Math.floor(x); }");
